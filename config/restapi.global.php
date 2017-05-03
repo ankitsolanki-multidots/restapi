@@ -4,7 +4,7 @@
  *
  */
 return [
-    "ApiRequest" => [
+    'ApiRequest' => [
         'responseFormat' => [
             'statusKey' => 'status',
             'statusOkText' => 'OK',
