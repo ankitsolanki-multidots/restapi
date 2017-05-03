@@ -1,0 +1,13 @@
+{
+    "name": "ankitgs/newrestapi",
+    "authors": [
+        {
+            "name": "Ankit Solanki",
+            "email": "ankit.solanki@multidots.com"
+        }
+    ],
+    "require": {
+        "firebase/php-jwt": "^4.0",
+        "zendframework/zend-json": "^3.0"
+    }
+}
