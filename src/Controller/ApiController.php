@@ -1,5 +1,4 @@
 <?php
-
 namespace restapi\Controller;
 
 use Zend\Mvc\Controller\AbstractRestfulController;
@@ -23,9 +22,12 @@ class ApiController extends AbstractRestfulController
      * @param $payload Array|Object
      * @return String
      */
-    protected function encodeJwtToken($payload){
+    protected function encodeJwtToken($payload) 
+    {
         $config = $this->getEvent()->getParam('config', false);
-        return JWT::encode($payload, $config['ApiRequest']['jwtAuth']['cypherKey'], $config['ApiRequest']['jwtAuth']['tokenAlgorithm']);
+        $cypherKey = $config['ApiRequest']['jwtAuth']['cypherKey'];
+        $tokenAlgorithm = $config['ApiRequest']['jwtAuth']['tokenAlgorithm'];
+        return JWT::encode($payload, $cypherKey, $tokenAlgorithm);
     }
 
     /**
@@ -33,9 +35,12 @@ class ApiController extends AbstractRestfulController
      * @param $token String 
      * @return Array|Object
      */
-    protected function decodeJwtToken($token){
+    protected function decodeJwtToken($token)
+    {
         $config = $this->getEvent()->getParam('config', false);
-        return JWT::decode($token, $config['ApiRequest']['jwtAuth']['cypherKey'], [$config['ApiRequest']['jwtAuth']['tokenAlgorithm']]);
+        $cypherKey = $config['ApiRequest']['jwtAuth']['cypherKey'];
+        $tokenAlgorithm = $config['ApiRequest']['jwtAuth']['tokenAlgorithm'];
+        return JWT::decode($token, $cypherKey, [$tokenAlgorithm]);
     }
 
     /**
@@ -46,23 +51,24 @@ class ApiController extends AbstractRestfulController
     public function createResponse()
     {
         $config = $this->getEvent()->getParam('config', false);
-    	$event = $this->getEvent();
+        $event = $this->getEvent();
         $response = $event->getResponse();
 
-        if(is_array($this->apiResponse)){
+        if (is_array($this->apiResponse)) {
             $response->setStatusCode($this->httpStatusCode);
         } else {
             $response->setStatusCode(500);
-            $this->apiResponse[$config['ApiRequest']['responseFormat']['errorKey']] = $config['ApiRequest']['responseFormat']['defaultErrorText'];
+            $errorKey = $config['ApiRequest']['responseFormat']['errorKey'];
+            $defaultErrorText = $config['ApiRequest']['responseFormat']['defaultErrorText'];
+            $this->apiResponse[$errorKey] = $defaultErrorText;
         }
-        
-        if($this->httpStatusCode == 200){
-            $sendResponse[$config['ApiRequest']['responseFormat']['statusKey']] = $config['ApiRequest']['responseFormat']['statusOkText']; 
+        $statusKey = $config['ApiRequest']['responseFormat']['statusKey'];
+        if ($this->httpStatusCode == 200) {
+            $sendResponse[$statusKey] = $config['ApiRequest']['responseFormat']['statusOkText']; 
         } else {
-            $sendResponse[$config['ApiRequest']['responseFormat']['statusKey']] = $config['ApiRequest']['responseFormat']['statusNokText']; 
+            $sendResponse[$statusKey] = $config['ApiRequest']['responseFormat']['statusNokText']; 
         }
-    	$sendResponse[$config['ApiRequest']['responseFormat']['resultKey']] = $this->apiResponse; 
-
-    	return new JsonModel($sendResponse);
+        $sendResponse[$config['ApiRequest']['responseFormat']['resultKey']] = $this->apiResponse;
+        return new JsonModel($sendResponse);
     }
 }

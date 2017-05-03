@@ -18,7 +18,7 @@ class RouteNotFoundController extends ApiController
     {
         $config = $this->getEvent()->getParam('config', false);
         $this->httpStatusCode = 404;
-    	$this->apiResponse = [$config['ApiRequest']['responseFormat']['errorKey'] => $config['ApiRequest']['responseFormat']['pageNotFoundKey']];
+        $this->apiResponse = [$config['ApiRequest']['responseFormat']['errorKey'] => $config['ApiRequest']['responseFormat']['pageNotFoundKey']];
         return $this->createResponse();
     }
 }

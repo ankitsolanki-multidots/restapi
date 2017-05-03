@@ -3,7 +3,6 @@
  * Global Configuration 
  *
  */
-
 return [
     "ApiRequest" => [
         'responseFormat' => [

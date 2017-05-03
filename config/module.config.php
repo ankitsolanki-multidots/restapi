@@ -1,5 +1,4 @@
 <?php
-
 namespace restapi;
 
 use Zend\Router\Http\Segment;

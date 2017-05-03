@@ -22,15 +22,10 @@ class Module
     
     public function onBootstrap(MvcEvent $e)
     {
-    	$eventManager   = $e->getApplication()->getEventManager();
+        $eventManager   = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
-        
-        $eventManager->attach(MvcEvent::EVENT_DISPATCH, array(
-            $this,
-            'boforeDispatch'
-        ), 100);
-        
+        $eventManager->attach(MvcEvent::EVENT_DISPATCH, array($this,'boforeDispatch'), 100);
         // Set CORS headers to allow all requests
         $headers = $e->getResponse()->getHeaders();
         $headers->addHeaderLine('Access-Control-Allow-Origin: *');
@@ -47,21 +42,21 @@ class Module
 
     public function boforeDispatch(MvcEvent $event)
     {
-      	$request = $event->getRequest();
+        $request = $event->getRequest();
         $response = $event->getResponse();
         $auth = $event->getRouteMatch()->getParam('isauth');
         $config = $event->getApplication()->getServiceManager()->get('Config');
         $event->setParam('config', $config);
-        if($auth) {
+        if ($auth) {
             $token = $event->getRequest()->getHeaders("Authorization")?$event->getRequest()->getHeaders("Authorization"):$request->isGet()?$request->getQuery('token'):$request->isPOST()?:$request->getPost('token');
             
-            if(!$token){
+            if (!$token) {
                 
                 $response->setStatusCode(401);
                 $response->getHeaders()->addHeaderLine('Content-Type', 'application/json');
                 $view = new JsonModel([ $config['ApiRequest']['responseFormat']['statusKey'] => $config['ApiRequest']['responseFormat']['statusNokText'], $config['ApiRequest']['responseFormat']['resultKey'] => [ $config['ApiRequest']['responseFormat']['errorKey'] => $config['ApiRequest']['responseFormat']['authenticationRequireText'] ]]);
                 $response->setContent($view->serialize());
-                return $response;		
+                return $response;
             }
         }
     }
