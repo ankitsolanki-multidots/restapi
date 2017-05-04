@@ -39,7 +39,6 @@ class Module
      * @param \Zend\Mvc\MvcEvent $event
      * @return Object Response
      */
-
     public function boforeDispatch(MvcEvent $event)
     {
         $request = $event->getRequest();
