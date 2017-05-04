@@ -4,11 +4,6 @@ namespace restapi\Controller;
 
 class RouteNotFoundController extends ApiController
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-    
     /**
      * Not Found Route for api give an error to api
      * 

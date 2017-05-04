@@ -24,6 +24,9 @@ class ApiController extends AbstractRestfulController
      */
     protected function encodeJwtToken($payload) 
     {
+        if (!is_array($payload)) {
+            return false;
+        }
         $config = $this->getEvent()->getParam('config', false);
         $cypherKey = $config['ApiRequest']['jwtAuth']['cypherKey'];
         $tokenAlgorithm = $config['ApiRequest']['jwtAuth']['tokenAlgorithm'];
@@ -37,6 +40,9 @@ class ApiController extends AbstractRestfulController
      */
     protected function decodeJwtToken($token)
     {
+        if (!$token) {
+            return false;
+        }
         $config = $this->getEvent()->getParam('config', false);
         $cypherKey = $config['ApiRequest']['jwtAuth']['cypherKey'];
         $tokenAlgorithm = $config['ApiRequest']['jwtAuth']['tokenAlgorithm'];
