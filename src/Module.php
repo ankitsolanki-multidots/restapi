@@ -47,10 +47,14 @@ class Module
         $config = $event->getApplication()->getServiceManager()->get('Config');
         $event->setParam('config', $config);
         if ($auth) {
-            $token = $event->getRequest()->getHeaders("Authorization")?$event->getRequest()->getHeaders("Authorization"):$request->isGet()?$request->getQuery('token'):$request->isPOST()?:$request->getPost('token');
-            
+            $token = $event->getRequest()->getHeaders("Authorization")->getFieldValue();
+            if(!$token && $request->isGet()){
+                $token = $request->getQuery('token');
+            }
+            if(!$token && $request->isPost()){
+                $token = $request->getPost('token');
+            }
             if (!$token) {
-                
                 $response->setStatusCode(401);
                 $response->getHeaders()->addHeaderLine('Content-Type', 'application/json');
                 $view = new JsonModel([ $config['ApiRequest']['responseFormat']['statusKey'] => $config['ApiRequest']['responseFormat']['statusNokText'], $config['ApiRequest']['responseFormat']['resultKey'] => [ $config['ApiRequest']['responseFormat']['errorKey'] => $config['ApiRequest']['responseFormat']['authenticationRequireText'] ]]);

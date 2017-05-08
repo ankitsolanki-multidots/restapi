@@ -63,7 +63,8 @@ class ApiController extends AbstractRestfulController
         if (is_array($this->apiResponse)) {
             $response->setStatusCode($this->httpStatusCode);
         } else {
-            $response->setStatusCode(500);
+            $this->httpStatusCode = 500;
+            $response->setStatusCode($this->httpStatusCode);
             $errorKey = $config['ApiRequest']['responseFormat']['errorKey'];
             $defaultErrorText = $config['ApiRequest']['responseFormat']['defaultErrorText'];
             $this->apiResponse[$errorKey] = $defaultErrorText;
