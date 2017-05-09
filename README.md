@@ -31,6 +31,14 @@ Now copy this file "vender/restapi/config/restapi.global.php" and paste to root 
 
 Now add this 'restapi' to modules.config.php file.
 
+```php
+return [
+    ....
+    //add this 
+    'restapi'
+];
+```
+
 ## Usage
 You just need to create your API related controller and extend it to `ApiController` instead of default `AbstractActionController`.  You just need to set you results in `apiResponse` variable and your response code in `httpStatusCode` variable and return $this->createResponse(). For example,
 ```php
