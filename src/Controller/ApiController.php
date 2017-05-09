@@ -91,7 +91,7 @@ class ApiController extends AbstractRestfulController
     /**
      * contain encoded token for user.
      * @param $token String 
-     * @return Array|Object
+     * @return Array|Object or Error Message
      */
     protected function decodeJwtToken($token)
     {
