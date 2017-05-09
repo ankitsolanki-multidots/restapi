@@ -4,6 +4,7 @@ namespace restapi\Controller;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
 use Firebase\JWT\JWT;
+use Zend\EventManager\EventManagerInterface;
 
 class ApiController extends AbstractRestfulController
 {
@@ -16,6 +17,51 @@ class ApiController extends AbstractRestfulController
      * @var array $apiResponse Define response for api
      */
     public $apiResponse;
+
+    public function setEventManager(EventManagerInterface $events)
+    {
+        parent::setEventManager($events);
+        $events->attach('dispatch', array($this, 'checkAuthorization'), 10);
+    }
+    
+    public function checkAuthorization($event) 
+    {
+        $request = $event->getRequest();
+        $response = $event->getResponse();
+        $auth = $event->getRouteMatch()->getParam('isauth');
+        $config = $event->getApplication()->getServiceManager()->get('Config');
+        $event->setParam('config', $config);
+        if ($auth) {
+            $token = $event->getRequest()->getHeaders("Authorization")?$event->getRequest()->getHeaders("Authorization")->getFieldValue():'';
+            if($token) {
+                $token = trim($token,"Berear");
+                $token = trim($token," ");
+            }
+            if(!$token && $request->isGet()){
+                $token = $request->getQuery('token');
+            }
+            if(!$token && $request->isPost()){
+                $token = $request->getPost('token');
+            }
+            
+            if (!$token) {
+                $response->setStatusCode(401);
+                $response->getHeaders()->addHeaderLine('Content-Type', 'application/json');
+                $view = new JsonModel([ $config['ApiRequest']['responseFormat']['statusKey'] => $config['ApiRequest']['responseFormat']['statusNokText'], $config['ApiRequest']['responseFormat']['resultKey'] => [ $config['ApiRequest']['responseFormat']['errorKey'] => $config['ApiRequest']['responseFormat']['authenticationRequireText'] ]]);
+                $response->setContent($view->serialize());
+                return $response;
+            } else {
+                $tokenValue = $this->decodeJwtToken($token);
+                if (!is_object($tokenValue)) {
+                    $response->setStatusCode(400);
+                    $response->getHeaders()->addHeaderLine('Content-Type', 'application/json');
+                    $view = new JsonModel([ $config['ApiRequest']['responseFormat']['statusKey'] => $config['ApiRequest']['responseFormat']['statusNokText'], $config['ApiRequest']['responseFormat']['resultKey'] => [ $config['ApiRequest']['responseFormat']['errorKey'] => $tokenValue ]]);
+                    $response->setContent($view->serialize());
+                    return $response;
+                }
+            }
+        }
+    }
 
     /**
      * contain user information for createing JWT Token
@@ -46,7 +92,12 @@ class ApiController extends AbstractRestfulController
         $config = $this->getEvent()->getParam('config', false);
         $cypherKey = $config['ApiRequest']['jwtAuth']['cypherKey'];
         $tokenAlgorithm = $config['ApiRequest']['jwtAuth']['tokenAlgorithm'];
-        return JWT::decode($token, $cypherKey, [$tokenAlgorithm]);
+        try {
+            $decodeToken = JWT::decode($token, $cypherKey, [$tokenAlgorithm]);
+        } catch(\Exception $e){
+            return $e->getMessage();
+        }
+        return $decodeToken;
     }
 
     /**
@@ -78,4 +129,6 @@ class ApiController extends AbstractRestfulController
         $sendResponse[$config['ApiRequest']['responseFormat']['resultKey']] = $this->apiResponse;
         return new JsonModel($sendResponse);
     }
+    
+    
 }
