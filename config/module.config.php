@@ -21,6 +21,7 @@ return [
                         'isauth'     => true,
                     ],
                 ],
+                'priority' => -1000,
             ],
         ],
     ],
