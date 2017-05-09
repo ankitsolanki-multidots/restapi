@@ -18,7 +18,6 @@ return [
                     'defaults' => [
                         'controller' => Controller\RouteNotFoundController::class,
                         'action'     => 'routenotfound',
-                        'isauth'     => true,
                     ],
                 ],
                 'priority' => -1000,
