@@ -29,9 +29,9 @@ class ApiController extends AbstractRestfulController
     }
     
     /**
-     * This Function call from eventmanager to check authntication and token validation check
+     * This Function call from eventmanager to check authntication and token validation
      * @param type $event
-     * @return type
+     * 
      */
     public function checkAuthorization($event) 
     {
@@ -138,6 +138,4 @@ class ApiController extends AbstractRestfulController
         $sendResponse[$config['ApiRequest']['responseFormat']['resultKey']] = $this->apiResponse;
         return new JsonModel($sendResponse);
     }
-    
-    
 }
