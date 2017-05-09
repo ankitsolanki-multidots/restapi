@@ -63,7 +63,7 @@ class ApiController extends AbstractRestfulController
     }
     
     /**
-     * Check Requenst object have Authorization token or not 
+     * Check Request object have Authorization token or not 
      * @param type $request
      * @return type String
      */

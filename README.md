@@ -34,7 +34,7 @@ Now add this 'restapi' to modules.config.php file.
 ## Usage
 You just need to create your API related controller and extend it to `ApiController` instead of default `AbstractActionController`.  You just need to set you results in `apiResponse` variable and your response code in `httpStatusCode` variable and return $this->createResponse(). For example,
 ```php
-namespace App\Controller;
+namespace Application\Controller;
 
 use restapi\Controller\ApiController;
 
@@ -78,7 +78,7 @@ The URL for above example will be `http://yourdomain.com/foo/bar`. You can custo
                     'defaults' => [
                         'controller' => Controller\FooController::class,
                         'action'     => 'bar',
-                        'isauth'    => TRUE // set true if this api Required JWT Authorization.
+                        'isAuthorizationRequired'    => true // set true if this api Required JWT Authorization.
                     ],
                 ],
             ],
@@ -114,7 +114,7 @@ return [
 ];
 ```
 ### Request authentication using JWT
-You can check for presence of auth token in API request. You need to define a flag `isauth` to `true` or `false`. For example,
+You can check for presence of auth token in API request. You need to define a flag `isAuthorizationRequired` to `true` or `false`. For example,
 ```php
 'router' => [
         'routes' => [
@@ -125,7 +125,7 @@ You can check for presence of auth token in API request. You need to define a fl
                     'defaults' => [
                         'controller' => Controller\FooController::class,
                         'action'     => 'bar',
-                        'isauth'    => TRUE // set true if this api Required JWT Authorization.
+                        'isAuthorizationRequired'    => true // set true if this api Required JWT Authorization.
                     ],
                 ],
             ],
@@ -138,6 +138,9 @@ Above API method will require auth token in request. You can pass the auth token
 If you want to pass token in header, use below format.
 ```php
 Authorization: Bearer [token]
+
+Example:
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJkYXRhIjoidmFsdWUifQ.xQgVrW5o3iNzA4iY3NDKwDp-pYoIhr-vyFgmi9RuMFo
 ```
 In case of GET or POST parameter, pass the token in `token` parameter.
 
@@ -150,8 +153,8 @@ This plugin provides methos to generate jwt token and sign with same key and alg
          * process your data and validate it against database table
          */
 
-		// generate token if valid user
-		$payload = ['email' => $user->email, 'name' => $user->name];
+        // generate token if valid user
+        $payload = ['email' => $user->email, 'name' => $user->name];
 
         $this->apiResponse['token'] = $this->generateToken($payload);
         $this->apiResponse['message'] = 'Logged in successfully.';
@@ -171,21 +174,21 @@ The default response format of API is `json` and its structure is defined as bel
 ```
 
 ## Examples
-Below are few examples to understand how this plugin works.
+Below one examples to understand how this plugin works.
 
 ### Retrieve articles
 Let's create an API which returns a list of articles with basic details like id and title. Our controller will look like,
 ```php
 <?php
 
-namespace App\Controller;
+namespace Application\Controller;
 
 use restapi\Controller\ApiController;
 
 /**
  * Articles Controller
  *
- * @property \App\Model\Table\ArticlesTable $Articles
+ * 
  */
 class ArticlesController extends ApiController
 {
