@@ -14,7 +14,7 @@ return [
             '404' => [
                 'type' => Segment::class,
                 'options' => [
-                    'route'    => '/:any[/:any][/:any][/:any][/:any][/:any]',
+                    'route'    => '/:*',
                     'defaults' => [
                         'controller' => Controller\RouteNotFoundController::class,
                         'action'     => 'routenotfound',
