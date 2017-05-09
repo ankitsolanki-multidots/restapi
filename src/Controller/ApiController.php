@@ -18,12 +18,21 @@ class ApiController extends AbstractRestfulController
      */
     public $apiResponse;
 
+    /**
+     * set Event Manager to check Authorization
+     * @param \Zend\EventManager\EventManagerInterface $events
+     */
     public function setEventManager(EventManagerInterface $events)
     {
         parent::setEventManager($events);
         $events->attach('dispatch', array($this, 'checkAuthorization'), 10);
     }
     
+    /**
+     * This Function call from eventmanager to check authntication and token validation check
+     * @param type $event
+     * @return type
+     */
     public function checkAuthorization($event) 
     {
         $request = $event->getRequest();
