@@ -33,43 +33,54 @@ class ApiController extends AbstractRestfulController
      * @param type $event
      * 
      */
-    public function checkAuthorization($event) 
+    public function checkAuthorization($event)
     {
         $request = $event->getRequest();
         $response = $event->getResponse();
-        $auth = $event->getRouteMatch()->getParam('isauth');
+        $isAuthorizationRequired = $event->getRouteMatch()->getParam('isAuthorizationRequired');
         $config = $event->getApplication()->getServiceManager()->get('Config');
         $event->setParam('config', $config);
-        if ($auth) {
-            $token = $event->getRequest()->getHeaders("Authorization")?$event->getRequest()->getHeaders("Authorization")->getFieldValue():'';
-            if($token) {
-                $token = trim($token,"Berear");
-                $token = trim($token," ");
-            }
-            if(!$token && $request->isGet()){
-                $token = $request->getQuery('token');
-            }
-            if(!$token && $request->isPost()){
-                $token = $request->getPost('token');
-            }
-            
-            if (!$token) {
-                $response->setStatusCode(401);
-                $response->getHeaders()->addHeaderLine('Content-Type', 'application/json');
-                $view = new JsonModel([ $config['ApiRequest']['responseFormat']['statusKey'] => $config['ApiRequest']['responseFormat']['statusNokText'], $config['ApiRequest']['responseFormat']['resultKey'] => [ $config['ApiRequest']['responseFormat']['errorKey'] => $config['ApiRequest']['responseFormat']['authenticationRequireText'] ]]);
-                $response->setContent($view->serialize());
-                return $response;
-            } else {
-                $tokenValue = $this->decodeJwtToken($token);
-                if (!is_object($tokenValue)) {
-                    $response->setStatusCode(400);
-                    $response->getHeaders()->addHeaderLine('Content-Type', 'application/json');
-                    $view = new JsonModel([ $config['ApiRequest']['responseFormat']['statusKey'] => $config['ApiRequest']['responseFormat']['statusNokText'], $config['ApiRequest']['responseFormat']['resultKey'] => [ $config['ApiRequest']['responseFormat']['errorKey'] => $tokenValue ]]);
-                    $response->setContent($view->serialize());
-                    return $response;
-                }
-            }
+        $responseStatusKey = $config['ApiRequest']['responseFormat']['statusKey'];
+        if (!$isAuthorizationRequired) {
+            return;
         }
+        $jwtToken = $this->findJwtToken($request);
+        if ($jwtToken) {
+            $tokenValue = $this->decodeJwtToken($jwtToken);
+            if (is_object($tokenValue)) {
+                return;
+            }
+            $response->setStatusCode(400);
+            $jsonModelArr = [$responseStatusKey => $config['ApiRequest']['responseFormat']['statusNokText'], $config['ApiRequest']['responseFormat']['resultKey'] => [$config['ApiRequest']['responseFormat']['errorKey'] => $tokenValue]];
+        } else {
+            $response->setStatusCode(401);
+            $jsonModelArr = [$responseStatusKey => $config['ApiRequest']['responseFormat']['statusNokText'], $config['ApiRequest']['responseFormat']['resultKey'] => [$config['ApiRequest']['responseFormat']['errorKey'] => $config['ApiRequest']['responseFormat']['authenticationRequireText']]];
+        }
+        $response->getHeaders()->addHeaderLine('Content-Type', 'application/json');
+        $view = new JsonModel($jsonModelArr);
+        $response->setContent($view->serialize());
+        return $response;
+    }
+    
+    /**
+     * Check Requenst object have Authorization token or not 
+     * @param type $request
+     * @return type String
+     */
+    public function findJwtToken($request)
+    {
+        $jwtToken = $request->getHeaders("Authorization") ? $request->getHeaders("Authorization")->getFieldValue() : '';
+        if ($jwtToken) {
+            $jwtToken = trim(trim($jwtToken, "Bearer"), " ");
+            return $jwtToken;
+        }
+        if ($request->isGet()) {
+            $jwtToken = $request->getQuery('token');
+        }
+        if ($request->isPost()) {
+            $jwtToken = $request->getPost('token');
+        }
+        return $jwtToken;
     }
 
     /**
