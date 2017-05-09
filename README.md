@@ -24,9 +24,9 @@ After installation, go to root path and open composer.json file and add followin
     },
 ```
 Now Execute following command
-
+```php
 composer dump-autoload
-
+```
 Now copy this file "vender/restapi/config/restapi.global.php" and paste to root "config/autoload/restapi.global.php"
 
 Now add this 'restapi' to modules.config.php file.
@@ -94,10 +94,7 @@ This plugin provides several configuration related to Response, Request and `JWT
 
 return [
     'ApiRequest' => [
-        'debug' => false,
-        'responseType' => 'json',
-        'xmlResponseRootNode' => 'response',
-    	'responseFormat' => [
+        'responseFormat' => [
             'statusKey' => 'status',
             'statusOkText' => 'OK',
             'statusNokText' => 'NOK',
@@ -105,21 +102,14 @@ return [
             'messageKey' => 'message',
             'defaultMessageText' => 'Empty response!',
             'errorKey' => 'error',
-            'defaultErrorText' => 'Unknown request!'
+            'defaultErrorText' => 'Unknown request!',
+            'authenticationRequireText' => 'Authentication Required.',
+            'pageNotFoundKey' => 'Request Not Found.',
         ],
-        'log' => false,
         'jwtAuth' => [
-            'enabled' => true,
             'cypherKey' => 'R1a#2%dY2fX@3g8r5&s4Kf6*sd(5dHs!5gD4s',
             'tokenAlgorithm' => 'HS256'
         ],
-        'cors' => [
-            'enabled' => true,
-            'origin' => '*',
-            'allowedMethods' => ['GET', 'POST', 'OPTIONS'],
-            'allowedHeaders' => ['Content-Type, Authorization, Accept, Origin'],
-            'maxAge' => 2628000
-        ]
     ]
 ];
 ```
