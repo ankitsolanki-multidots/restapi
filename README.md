@@ -162,9 +162,10 @@ This plugin provides methos to generate jwt token and sign with same key and alg
          */
 
         // generate token if valid user
-        $payload = ['email' => $user->email, 'name' => $user->name];
+        $this->tokenPayload = ['email' => $user->email, 'name' => $user->name];
+        $this->generateToken();
 
-        $this->apiResponse['token'] = $this->generateToken($payload);
+        $this->apiResponse['token'] = $this->token;
         $this->apiResponse['message'] = 'Logged in successfully.';
         return $this->createResponse();
     }

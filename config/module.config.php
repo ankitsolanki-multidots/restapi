@@ -1,11 +1,12 @@
 <?php
+
 namespace restapi;
 
 use Zend\Router\Http\Segment;
 use Zend\ServiceManager\Factory\InvokableFactory;
 
 return [
-    
+
     /**
      * Define route not found routes
      */
@@ -14,10 +15,10 @@ return [
             '404' => [
                 'type' => Segment::class,
                 'options' => [
-                    'route'    => '/:*',
+                    'route' => '/:*',
                     'defaults' => [
                         'controller' => Controller\RouteNotFoundController::class,
-                        'action'     => 'routenotfound',
+                        'action' => 'routenotfound',
                     ],
                 ],
                 'priority' => -1000,

@@ -4,6 +4,7 @@ namespace restapi\Controller;
 
 class RouteNotFoundController extends ApiController
 {
+
     /**
      * Not Found Route for api give an error to api
      * 
