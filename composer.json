@@ -26,8 +26,13 @@
         "zendframework/zend-json": "^3.0"
     },
     "autoload": {
-        "psr-0": {
+        "psr-4": {
             "RestApi\\": "src"
+        }
+    },
+    "extra": {
+        "zf": {
+            "module": "restapi"
         }
     }
 }
