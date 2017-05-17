@@ -6,8 +6,28 @@
             "email": "ankit.solanki@multidots.com"
         }
     ],
+    "description": "Zend Framework 3 module to build REST APIs",
+    "type": "library",
+    "license": "MIT",
+    "homepage": "https://github.com/multidots/zf3-rest-api",
+    "support": {
+        "issues": "https://github.com/multidots/zf3-rest-api/issues",
+        "source": "https://github.com/multidots/zf3-rest-api"
+    },
+    "keywords": [
+        "zf3",
+        "zend framework",
+        "cors",
+        "rest",
+        "rest api"
+    ],
     "require": {
         "firebase/php-jwt": "^4.0",
         "zendframework/zend-json": "^3.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "RestApi\\": "src"
+        }
     }
 }
